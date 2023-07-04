@@ -1,10 +1,6 @@
-# Documentação Prova Prática Devops Enginner Pleno
-
-![Alt text](./doc/Marca_FIESC_Completa.png "Marca_FIESC")
+# Documentação Devops Enginner
 
 ## Sobre
-
-Este é um projeto referente ao processo seletivo para DevOps Enginner Pleno.
 
 Toda a construção do projeto foi utilizado o conceito de namespace, por questões de organização e também por motivos de controle sobre o acesso.
 
@@ -101,9 +97,6 @@ Com toda certeza tem pontos a serem melhorados no projeto no geral principalment
 Obrigado !!
 
 Att.
-
-Candidato,
-
 Vitor Costa
 
 
