@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: app-prova
+  name: app-prova
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-prova
+  template:
+    metadata:
+      labels:
+        app: app-prova
+    spec:
+      containers:
+      - image: vitorcostasilva/app-prova:4.0
+        name: app-prova
+        resources:
+          requests:
+            cpu: 0.5  #Recursos de CPU
+            memory: 512Mi  #Recursos de memória
+          limits:
+            cpu: 1  #Recursos de CPU
+            memory: 1Gi 
+        env:
+          - name: DATABASE_HOST
+            value: db-prova
+          - name: DATABASE_USER
+            value: root
+          - name: DATABASE_PASS
+            value: secret
+          - name: DATABASE_DBNAME
+            value: db_prova
+          - name: UPLOAD_DIR
+            value: /app/backend/uploads
+        ports:
+          - containerPort: 8080
+          - containerPort: 8081

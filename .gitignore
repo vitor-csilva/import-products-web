@@ -1,0 +1,7 @@
+.venv
+/uploads/output.log
+/k8s/config
+/k8s/teste
+/backend/src/main_original.py
+/backend/src/main_mod.py
+/logs/logs_backend.txt
