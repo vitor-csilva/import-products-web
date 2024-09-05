@@ -13,10 +13,10 @@ kind version || _install_kind
 #Criando o cluster e parametrizando o kubectl
 kind create cluster  --config ./k8s/config.yaml --name k8s-prova --kubeconfig ./k8s/config
 export KUBECONFIG=./k8s/config
-kubectl apply -f ./k8s/deployments/deployment-db-prova.yaml
-kubectl apply -f ./k8s/services/service-db-prova.yaml
-kubectl apply -f ./k8s/deployments/deployment-app-prova.yaml
-kubectl apply -f ./k8s/services/service-app-prova.yaml
+kubectl apply -f ./k8s/deployments/deployment-db-import-products.yaml
+kubectl apply -f ./k8s/services/service-db-import-products.yaml
+kubectl apply -f ./k8s/deployments/deployment-import-products.yaml
+kubectl apply -f ./k8s/services/service-import-products.yaml
 kubectl apply -f ./k8s/hpa/hpa.yaml
 
 #Executando a pipeline(build, gerar tag, push da imagem, att da tag da imagem)

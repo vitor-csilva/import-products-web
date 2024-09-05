@@ -2,21 +2,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: app-prova
-  name: app-prova
+    app: import-products
+  name: import-products
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: app-prova
+      app: import-products
   template:
     metadata:
       labels:
-        app: app-prova
+        app: import-products
     spec:
       containers:
-      - image: vitorcostasilva/app-prova:4.0
-        name: app-prova
+      - image: vitorcostasilva/import-products:1.0
+        name: import-products
         resources:
           requests:
             cpu: 0.5  #Recursos de CPU

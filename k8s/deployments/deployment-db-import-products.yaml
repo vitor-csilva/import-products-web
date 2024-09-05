@@ -2,20 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: db-prova
-  name: db-prova
+    app: db-import-products
+  name: db-import-products
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: db-prova
+      app: db-import-products
   template:
     metadata:
       labels:
-        app: db-prova
+        app: db-import-products
     spec:
       containers:
-      - name: db-prova
+      - name: db-import-products
         image: postgres:10
         env:
           - name: POSTGRES_USER

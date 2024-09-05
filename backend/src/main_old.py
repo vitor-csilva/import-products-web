@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 DATABASE_URL = f"postgresql://{os.getenv('DATABASE_USER')}:{os.getenv('DATABASE_PASS')}@{os.getenv('DATABASE_HOST')}/{os.getenv('DATABASE_DBNAME')}"
+# engine = sqlalchemy.create_engine(DATABASE_URL)
 engine = sqlalchemy.create_engine(DATABASE_URL, echo=True)
 
 api = FastAPI()
@@ -60,9 +61,7 @@ async def import_files(file: UploadFile):
             raise HTTPException(
                 status_code=500, detail="O arquivo não está no formato correto!")
 
-        logging.info(df.head())  # Verificar os primeiros registros do CSV
-
-        with engine.begin() as conn:  # Usando transação explícita
+        with engine.connect() as conn:
             for _, row in df.iterrows():
                 query = sqlalchemy.text("""
                     INSERT INTO product.product
@@ -77,16 +76,9 @@ async def import_files(file: UploadFile):
                     'sale_price': row['sale_price'],
                     'quantity': row['quantity']
                 })
-
-            conn.commit()  # Confirmando a transação manualmente
+            conn.commit()
 
         return {"detail": "Importação realizada com sucesso!"}
-    except sqlalchemy.exc.SQLAlchemyError as e:
-        logging.error("Erro ao inserir no banco de dados")
-        logging.exception(e)
-        raise HTTPException(
-            status_code=500, detail=f"Erro ao inserir no banco de dados: {str(e)}"
-        )
     except HTTPException as e:
         logging.exception(e)
         raise HTTPException(
@@ -104,19 +96,20 @@ async def get_products() -> List[Product]:
         with engine.connect() as conn:
             query = sqlalchemy.text("SELECT * FROM product.product ORDER BY created_at DESC")
             result = conn.execute(query)
-            
             products = [
                 Product(
-                    id=row['id'],
-                    created_at=row['created_at'],
-                    name=row['name'],
-                    cost_price=row['cost_price'],
-                    sale_price=row['sale_price'],
-                    quantity=row['quantity']
-                ) for row in result.mappings()  # Usando mappings() para mapear como dicionário
+                    id=r['id'],
+                    created_at=r['created_at'],
+                    name=r['name'],
+                    cost_price=r['cost_price'],
+                    sale_price=r['sale_price'],
+                    quantity=r['quantity']
+                ) for r in result
             ]
             return products
     except Exception as e:
         logging.exception(e)
         raise HTTPException(status_code=500, detail="Erro ao obter os produtos!")
 
+# if __name__ == "__main__":
+#     uvicorn.run(api, host="0.0.0.0", port=8081)

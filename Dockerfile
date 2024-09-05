@@ -1,4 +1,4 @@
-FROM ubuntu:22.10
+FROM ubuntu:22.04
 
 #Criando um diretório específico dentro do container para melhor organização
 WORKDIR /app
@@ -17,10 +17,12 @@ COPY backend ./backend
 COPY frontend ./frontend
 
 #Removendo os arquivos *.csv de dentro da pasta de uploads para ter uma imagem mais reduzida utilizando o cron
-RUN cd backend; ./cron.sh; cd /app
+## OBS: Cron Será adicionado ao Kubernetes
+# RUN cd backend; ./cron.sh; cd /app
 
 #Adicionando o cron para ser executado a cada 5 minutos
-RUN echo "*/5 * * * * root /bin/bash /app/backend/cron.sh" > /etc/cron.d/cron_app_prova
+## OBS: Cron Será adicionado ao Kubernetes
+# RUN echo "*/5 * * * * root /bin/bash /app/backend/cron.sh" > /etc/cron.d/cron_app_prova
 
 #Instalando dependências necessárias
 RUN pip install -r ./backend/requirements.txt

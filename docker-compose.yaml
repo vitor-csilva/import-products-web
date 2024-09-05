@@ -1,35 +1,34 @@
-version: "3.8"
-
 services:
-  db-prova:
+  db-import-products:
     image: postgres:10
-    restart: always
-    container_name: db-prova
+    restart: unless-stopped
+    container_name: db-import-products
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=db_prova
+      - POSTGRES_DB=db-import-products
       - TZ=America/Sao_Paulo
     volumes:
       - $PWD/database/scripts:/docker-entrypoint-initdb.d
 
-  app-prova:
+  import-products:
     build:
       context: .
-    restart: always
-    container_name: app-prova
+    # image: vitorcostasilva/import-products:latest
+    restart: unless-stopped
+    container_name: import-products
     environment:
-      - DATABASE_HOST=db-prova
+      - DATABASE_HOST=db-import-products
       - DATABASE_USER=root
       - DATABASE_PASS=secret
-      - DATABASE_DBNAME=db_prova
+      - DATABASE_DBNAME=db-import-products
       - UPLOAD_DIR=/app/backend/uploads
     ports:
       - 8080:8080
       - 8081:8081
     depends_on:
-      - db-prova
+      - db-import-products
     volumes:
-      - ./backend:/app/backend
-      - ./frontend:/app/frontend
-      - ./logs/logs_backend.txt:/app/backend/output.log
+      - $PWD/backend:/app/backend
+    #   - $PWD/frontend:/app/frontend
+      - $PWD/logs/logs_backend.txt:/app/backend/output.log
