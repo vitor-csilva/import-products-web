@@ -4,15 +4,15 @@ metadata:
   labels:
     app: import-products
   name: import-products
-  namespace: app-import-products
+  namespace: import-products
 spec:
   ports:
   - name: port-8080
-    port: 8080
+    port: 80
     protocol: TCP
     targetPort: 8080
   - name: port-8081
-    port: 8081
+    port: 81
     protocol: TCP
     targetPort: 8081
   selector:

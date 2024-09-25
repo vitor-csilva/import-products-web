@@ -3,6 +3,9 @@ build:
 # export DOCKER_DEFAULT_PLATFORM=linux/amd64
 	@docker build -t vitorcostasilva/import-products .
 
+build2:
+	@docker build --platform linux/amd64 -t vitorcostasilva/import-products:2.0 .
+
 run:
 	@docker run -d -p 8080:8080 -p 8081:8081 --name import-products vitorcostasilva/import-products
 

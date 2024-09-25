@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: import-products
+  name: import-products
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: import-products
+  template:
+    metadata:
+      labels:
+        app: import-products
+    spec:
+      containers:
+      - image: vitorcostasilva/import-products:2.0
+        name: import-products
+        resources:
+          requests:
+            cpu: 0.5  #Recursos de CPU
+            memory: 512Mi  #Recursos de memória
+          limits:
+            cpu: 1  #Recursos de CPU
+            memory: 2Gi 
+        env:
+          - name: DATABASE_HOST
+            value: db-import-products
+          - name: DATABASE_USER
+            valueFrom:
+              secretKeyRef:
+                name: credentials
+                key: DATABASE_USER
+          - name: DATABASE_PASS
+            valueFrom:
+              secretKeyRef:
+                name: credentials
+                key: DATABASE_PASS
+          - name: DATABASE_DBNAME
+            valueFrom:
+              secretKeyRef:
+                name: credentials
+                key: DATABASE_DBNAME
+          # - name: UPLOAD_DIR
+          #   value: /app/backend/uploads
+        # ports:
+        #   - containerPort: 8080
+        #   - containerPort: 8081
