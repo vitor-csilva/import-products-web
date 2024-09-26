@@ -40,7 +40,6 @@ spec:
           configMap:
             name: product-schema-config  # Reference the ConfigMap
 
-          
 ---
 
 apiVersion: v1
