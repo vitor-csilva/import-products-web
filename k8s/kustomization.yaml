@@ -8,6 +8,5 @@ resources:
   - ./secrets/secret-import-products.yaml
   - ./deployments/deployment-db-import-products.yaml
   - ./services/service-db-import-products.yaml
-  # - service.yaml
-  # - configmap.yaml
-  # - secret.yaml
+  - ./hpa/hpa.yaml
+  - ./cronjobs/cronjob-import-products.yaml

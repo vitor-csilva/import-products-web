@@ -1,14 +1,15 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: app-import-products
+  name: hpa-import-products
+  namespace: import-products
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: import-products
-  minReplicas: 3
-  maxReplicas: 6
+  minReplicas: 2
+  maxReplicas: 5
   metrics:
   - type: Resource
     resource:

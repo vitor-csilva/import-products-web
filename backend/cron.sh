@@ -2,4 +2,6 @@
 
 export UPLOAD_DIR=uploads
 
-python -m src.cron
+python3 -m src.cron
+
+echo "Path $(UPLOAD_DIR) is cleaned !!"
