@@ -4,6 +4,7 @@ metadata:
   labels:
     app: db-import-products
   name: db-import-products
+  namespace: import-products
 spec:
   replicas: 1
   selector:

@@ -4,6 +4,7 @@ metadata:
   labels:
     app: import-products
   name: import-products
+  namespace: import-products
 spec:
   replicas: 2
   selector:
@@ -19,11 +20,11 @@ spec:
         name: import-products
         resources:
           requests:
-            cpu: 0.5  #Recursos de CPU
-            memory: 512Mi  #Recursos de memória
+            cpu: "500m"  #Recursos de CPU
+            memory: "512Mi"  #Recursos de memória
           limits:
-            cpu: 1  #Recursos de CPU
-            memory: 2Gi 
+            cpu: "1"  #Recursos de CPU
+            memory: "2Gi" 
         env:
           - name: DATABASE_HOST
             value: db-import-products
