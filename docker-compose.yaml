@@ -12,9 +12,9 @@ services:
       - $PWD/database/scripts:/docker-entrypoint-initdb.d
 
   import-products:
-    # build:
-      # context: .
-    image: vitorcostasilva/import-products:2.0
+    build:
+      context: .
+    # image: vitorcostasilva/import-products:2.0
     restart: unless-stopped
     container_name: import-products
     environment:

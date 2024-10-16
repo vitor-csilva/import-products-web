@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: import-products-cron
+  namespace: import-products
+spec:
+  schedule: "*/5 * * * *"  # Executar a cada 5 minutos, ajuste conforme necessário
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: cronjob-sa
+          containers:
+          - name: kubectl-exec
+            image: bitnami/kubectl:latest  # Use uma imagem com kubectl instalado
+            command:
+              - /bin/sh
+              - -c
+              - |
+                PODS=$(kubectl get pods -l app=import-products -o jsonpath='{.items[*].metadata.name}' -n import-products)
+                for POD in $PODS; do
+                  echo "Running cron.sh in $POD"
+                  kubectl exec -n import-products $POD -- /bin/bash -c "/app/backend/cron.sh"
+                done
+          restartPolicy: Never
+      backoffLimit: 3

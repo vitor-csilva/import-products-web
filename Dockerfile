@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM debian:bullseye-slim
 
 #Criando um diretório específico dentro do container para melhor organização
 WORKDIR /app
