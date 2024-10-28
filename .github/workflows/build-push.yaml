@@ -4,10 +4,10 @@ name: Build and Push Project Import Products
 on:
   push:
     branches: [ "main","develop" ]
-    paths:
-      - 'Dockerfile'
-      - 'backend/**'
-      - 'frontend/**'
+    # paths:
+    #   - 'Dockerfile'
+    #   - 'backend/**'
+    #   - 'frontend/**'
 
 env:
   REGISTRY: ghcr.io
