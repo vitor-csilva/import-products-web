@@ -9,4 +9,5 @@ resources:
   - ./deployments/deployment-db-import-products.yaml
   - ./services/service-db-import-products.yaml
   - ./hpa/hpa.yaml
+  - ./cronjobs/rbac.yaml
   - ./cronjobs/cronjob-exclude-csv.yaml
