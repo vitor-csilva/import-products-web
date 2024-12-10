@@ -5,7 +5,9 @@ metadata:
   namespace: import-products
 spec:
   schedule: "*/5 * * * *"  # Executar a cada 5 minutos, ajuste conforme necessário
-  suspend: false
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  suspend: true
   jobTemplate:
     spec:
       template:

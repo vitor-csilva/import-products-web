@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: import-products-ingress
+  namespace: import-products
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-set-header: "Host $host"
+    # nginx.ingress.kubernetes.io/server-snippet: |
+    #   server_name import-products.demo.com;
+    #   proxy_set_header Host $host;
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: import-products.demo.com
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: import-products
+            port:
+              number: 81
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: import-products
+            port:
+              number: 80

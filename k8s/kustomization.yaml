@@ -8,6 +8,7 @@ resources:
   - ./secrets/secret-import-products.yaml
   - ./deployments/deployment-db-import-products.yaml
   - ./services/service-db-import-products.yaml
+  - ./ingress/ingress.yaml
   - ./hpa/hpa.yaml
   - ./cronjobs/rbac.yaml
   - ./cronjobs/cronjob-exclude-csv.yaml

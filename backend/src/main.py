@@ -18,7 +18,9 @@ engine = sqlalchemy.create_engine(DATABASE_URL, echo=True)
 api = FastAPI()
 
 origins = [
-    'http://localhost:8080'
+    'http://localhost:8080',
+    'http://import-products.demo.com',  # Add the Ingress hostname
+    'https://import-products.demo.com'  # If using HTTPS
 ]
 
 api.add_middleware(
