@@ -4,10 +4,9 @@ metadata:
   name: import-products-ingress
   namespace: import-products
   annotations:
-    nginx.ingress.kubernetes.io/proxy-set-header: "Host $host"
-    # nginx.ingress.kubernetes.io/server-snippet: |
-    #   server_name import-products.demo.com;
-    #   proxy_set_header Host $host;
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   ingressClassName: nginx
   rules:
@@ -20,11 +19,11 @@ spec:
           service:
             name: import-products
             port:
-              number: 81
+              number: 80
       - path: /
         pathType: Prefix
         backend:
           service:
             name: import-products
             port:
-              number: 80
+              number: 8080
