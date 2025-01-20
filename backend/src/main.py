@@ -58,7 +58,7 @@ async def import_files(file: UploadFile):
 
         df = pd.read_csv(file_location)
 
-        if df.columns.tolist() != ['name', 'cost_price', 'sale_price', 'qukantity']:
+        if df.columns.tolist() != ['name', 'cost_price', 'sale_price', 'quantity']:
             raise HTTPException(
                 status_code=500, detail="O arquivo não está no formato correto!")
 
