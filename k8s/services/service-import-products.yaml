@@ -8,11 +8,11 @@ metadata:
 spec:
   ports:
   - name: backend-port
-    port: 80
+    port: 81
     protocol: TCP
     targetPort: 8081  # Backend application (FastAPI)
   - name: frontend-port
-    port: 8080
+    port: 80
     protocol: TCP
     targetPort: 8080  # Frontend application
   selector:

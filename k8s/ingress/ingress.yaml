@@ -7,13 +7,15 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/use-regex: "true"
+    # nginx.ingress.kubernetes.io/configuration-snippet: |
+    #   proxy_set_header Host $host;
 spec:
   ingressClassName: nginx
   rules:
   - host: import-products.demo.com
     http:
       paths:
-      - path: /api
+      - path: /
         pathType: Prefix
         backend:
           service:
@@ -26,4 +28,4 @@ spec:
           service:
             name: import-products
             port:
-              number: 8080
+              number: 81
