@@ -28,7 +28,7 @@ services:
       - 8081:8081
     depends_on:
       - db-import-products
-    volumes:
-      - $PWD/backend:/app/backend
-    #   - $PWD/frontend:/app/frontend
-      - $PWD/logs/logs_backend.txt:/app/backend/output.log
+    # volumes:
+      # - $PWD/backend:/app/backend
+      # - $PWD/frontend:/app/frontend
+      # - $PWD/logs/logs_backend.txt:/app/backend/output.log

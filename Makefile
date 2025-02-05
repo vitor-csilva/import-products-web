@@ -1,4 +1,4 @@
-VERSION=5.0
+VERSION=9.0
 
 build:
 # @cd backend; ./cron.sh; cd ..
