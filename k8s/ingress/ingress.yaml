@@ -4,18 +4,16 @@ metadata:
   name: import-products-ingress
   namespace: import-products
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    # nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
-    # nginx.ingress.kubernetes.io/configuration-snippet: |
-    #   proxy_set_header Host $host;
 spec:
   ingressClassName: nginx
   rules:
   - host: import-products.demo.com
     http:
       paths:
+      # Frontend - No rewrite
       - path: /
         pathType: Prefix
         backend:
@@ -23,8 +21,10 @@ spec:
             name: import-products
             port:
               number: 80
-      - path: /
-        pathType: Prefix
+
+      # Backend API - Rewrite applied in config snippet
+      - path: /api(/|$)(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: import-products

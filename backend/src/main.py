@@ -42,12 +42,12 @@ class Product(BaseModel):
     quantity: float
 
 
-@api.get("/")
+@api.get("/api")
 def index():
     return {"detail": "Hello World!"}
 
 
-@api.post("/import_file")
+@api.post("/api/import_file")
 async def import_files(file: UploadFile):
     try:
         upload_dir = os.getenv('UPLOAD_DIR')
@@ -101,7 +101,7 @@ async def import_files(file: UploadFile):
         )
 
 
-@api.get("/products", response_model=List[Product])
+@api.get("/api/products", response_model=List[Product])
 async def get_products() -> List[Product]:
     try:
         with engine.connect() as conn:
