@@ -16,7 +16,7 @@ spec:
         app: import-products
     spec:
       containers:
-      - image: vitorcostasilva/import-products:16.0
+      - image: vitorcostasilva/import-products:17.0
         name: import-products
         resources:
           requests:
@@ -24,7 +24,7 @@ spec:
             memory: "512Mi"  #Recursos de memória
           limits:
             cpu: "1"  #Recursos de CPU
-            memory: "2Gi" 
+            memory: "1Gi"
         env:
           - name: DATABASE_HOST
             value: db-import-products
@@ -45,6 +45,8 @@ spec:
                 key: DATABASE_DBNAME
           - name: UPLOAD_DIR
             value: /app/backend/uploads
+          - name: VUE_APP_API_URL
+            value: "http://import-products.demo.com/api/" 
         # ports:
         #   - containerPort: 8080
         #   - containerPort: 8081

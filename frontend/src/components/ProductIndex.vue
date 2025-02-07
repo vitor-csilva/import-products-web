@@ -65,7 +65,8 @@
 
 const axios = require('axios').default;
 const moment = require('moment');
-const API_URL = 'http://import-products.demo.com/api/';
+const API_URL = process.env.VUE_APP_API_URL || "http://localhost:8081/api/";
+
 
 export default {
   name: 'ProductIndex',
