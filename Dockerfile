@@ -26,7 +26,7 @@ COPY frontend ./frontend
 
 #Instalando dependências necessárias
 RUN pip install -r ./backend/requirements.txt
-RUN cd frontend; npm install
+RUN cd frontend; npm install; npm install dotenv
 
 #Expondo a porta de comunicação do container para acesso ao frontend e backend
 EXPOSE 8080 8081

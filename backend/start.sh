@@ -8,3 +8,4 @@
 
 #uvicorn src.main:api --reload --port 8081 --host 0.0.0.0
 nohup uvicorn src.main:api --reload --port 8081 --host 0.0.0.0 > output.log 2>&1 &
+#nohup uvicorn src.main:api --host 0.0.0.0 --port 8081 --forwarded-allow-ips='*' --proxy-headers > output.log 2>&1 &

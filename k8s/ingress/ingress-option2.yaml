@@ -1,0 +1,38 @@
+### This Version Ingress Works too ### 
+
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: import-products-ingress
+#   namespace: import-products
+#   annotations:
+#     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+#     nginx.ingress.kubernetes.io/use-regex: "true"
+#     nginx.ingress.kubernetes.io/configuration-snippet: |
+#       location ~* ^/api(/|$)(.*) {
+#         rewrite ^/api(/|$)(.*) /$2 break;
+#         proxy_pass http://import-products.import-products.svc.cluster.local:81;
+#       }
+# spec:
+#   ingressClassName: nginx
+#   rules:
+#   - host: import-products.demo.com
+#     http:
+#       paths:
+#       # Frontend - No rewrite
+#       - path: /api
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: import-products
+#             port:
+#               number: 80
+
+#       # Backend API - Rewrite applied in config snippet
+#       - path: /api(/|$)(.*)
+#         pathType: ImplementationSpecific
+#         backend:
+#           service:
+#             name: import-products
+#             port:
+#               number: 81

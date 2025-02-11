@@ -18,7 +18,10 @@ engine = sqlalchemy.create_engine(DATABASE_URL, echo=True)
 api = FastAPI()
 
 origins = [
-    'http://localhost:8080'
+    '*',
+    'http://localhost:8080',
+    'http://import-products.demo.com',  # Add the Ingress hostname
+    'https://import-products.demo.com'  # If using HTTPS
 ]
 
 api.add_middleware(
@@ -39,12 +42,12 @@ class Product(BaseModel):
     quantity: float
 
 
-@api.get("/")
+@api.get("/api")
 def index():
     return {"detail": "Hello World!"}
 
 
-@api.post("/import_file")
+@api.post("/api/import_file")
 async def import_files(file: UploadFile):
     try:
         upload_dir = os.getenv('UPLOAD_DIR')
@@ -98,7 +101,7 @@ async def import_files(file: UploadFile):
         )
 
 
-@api.get("/products", response_model=List[Product])
+@api.get("/api/products", response_model=List[Product])
 async def get_products() -> List[Product]:
     try:
         with engine.connect() as conn:

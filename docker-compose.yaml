@@ -23,12 +23,13 @@ services:
       - DATABASE_PASS=secret
       - DATABASE_DBNAME=db-import-products
       - UPLOAD_DIR=/app/backend/uploads
+      - VUE_APP_API_URL=http://localhost:8081/api/
     ports:
       - 8080:8080
       - 8081:8081
     depends_on:
       - db-import-products
-    volumes:
-      - $PWD/backend:/app/backend
-    #   - $PWD/frontend:/app/frontend
-      - $PWD/logs/logs_backend.txt:/app/backend/output.log
+    # volumes:
+      # - $PWD/backend:/app/backend
+      # - $PWD/frontend:/app/frontend
+      # - $PWD/logs/logs_backend.txt:/app/backend/output.log
