@@ -1,13 +1,23 @@
 const { defineConfig } = require("@vue/cli-service");
+const dotenv = require("dotenv");
+
+// Load environment variables
+dotenv.config();
+
+// Extract only the domain from VUE_APP_API_URL
+const API_URL = process.env.VUE_APP_API_URL || "";
+const DOMAIN = API_URL.replace(/https?:\/\//, "").split("/")[0]; // Get only "import-products.demo.com"
+
+console.log("🚀 Extracted WebSocket Domain:", DOMAIN);
 
 module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
-    allowedHosts: "all", // Allows any host, fixing "Invalid Host header" error
-    host: "0.0.0.0",      // Accept external connections
-    port: 8080,           // Frontend server port
+    allowedHosts: "all",
+    host: "0.0.0.0",
+    port: 8080,
     client: {
-      webSocketURL: 'auto://import-products.demo.com/ws', // Fix WebSocket issues
+      webSocketURL: `auto://${DOMAIN}/ws`, // Correct WebSocket URL
     }
   },
 });

@@ -16,7 +16,7 @@ spec:
         app: import-products
     spec:
       containers:
-      - image: vitorcostasilva/import-products:28.0
+      - image: vitorcostasilva/import-products:31.0
         name: import-products
         resources:
           requests:
