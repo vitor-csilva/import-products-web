@@ -7,10 +7,12 @@ WORKDIR /app
 ENV DEBIAN_FRONTEND=noninteractive TZ="America/Sao_Paulo"
 
 #Instalando todas as ferramentas e dependências necessárias
-RUN apt-get update && \
-    apt-get install sudo \
-    python3 python3-pip nodejs npm \
-    curl lsof nano cron -y
+RUN apt-get update && apt-get install -y \
+    sudo \
+    python3 python3-pip \
+    nodejs npm \
+    curl lsof nano cron \
+    && rm -rf /var/lib/apt/lists/*
 
 #Copiando os principais arquivos para execução do projeto
 COPY backend ./backend
