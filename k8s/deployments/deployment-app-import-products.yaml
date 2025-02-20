@@ -16,7 +16,7 @@ spec:
         app: import-products
     spec:
       containers:
-      - image: vitorcostasilva/import-products:31.0
+      - image: ghcr.io/vitor-csilva/importacao-produtos-web:latest
         name: import-products
         resources:
           requests:
