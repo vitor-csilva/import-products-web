@@ -5,6 +5,10 @@ metadata:
     app: import-products
   name: import-products
   namespace: import-products
+  annotations:
+    keel.sh/policy: force
+    keel.sh/trigger: poll
+    keel.sh/match-tag: "true"
 spec:
   replicas: 2
   selector:
