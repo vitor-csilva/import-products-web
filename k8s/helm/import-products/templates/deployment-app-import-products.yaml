@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "import-products.labels" . | nindent 4 }}
+  name: {{ include "import-products.fullname" . }}
+  namespace: {{ include "import-products.fullname" . }} ##temp, because later I will implementing ArgoCD
+  annotations:
+    keel.sh/policy: force
+    keel.sh/trigger: poll
+    keel.sh/match-tag: "true"
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ include "import-products.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "import-products.fullname" . }}
+    spec:
+      containers:
+      - image: {{ .Values.image.registry | default "ghcr.io/vitor-csilva/importacao-produtos-web" }}:{{ .Values.image.tag | default "latest" }}
+        name: import-products
+        resources:
+          requests:
+            cpu: "500m"  #Recursos de CPU
+            memory: "512Mi"  #Recursos de memória
+          limits:
+            cpu: {{ .Values.resources.cpu | default "1" }}  #Recursos de CPU
+            memory: {{ .Values.resources.memory | default "1Gi" }} 
+        env:
+          - name: DATABASE_HOST
+            valueFrom:
+              secretKeyRef:
+                name: credentials
+                key: DATABASE_HOST
+          - name: DATABASE_USER
+            valueFrom:
+              secretKeyRef:
+                name: credentials
+                key: DATABASE_USER
+          - name: DATABASE_PASS
+            valueFrom:
+              secretKeyRef:
+                name: credentials
+                key: DATABASE_PASS
+          - name: DATABASE_DBNAME
+            valueFrom:
+              secretKeyRef:
+                name: credentials
+                key: DATABASE_DBNAME
+          - name: UPLOAD_DIR
+            value: /app/backend/uploads
+          - name: VUE_APP_API_URL
+            value: "http://import-products.demo.com/api/" 
+        # ports:
+        #   - containerPort: 8080
+        #   - containerPort: 8081

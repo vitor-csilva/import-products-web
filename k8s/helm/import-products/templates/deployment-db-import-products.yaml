@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: db-{{ include "import-products.fullname" . }}
+  name: db-{{ include "import-products.fullname" . }}
+  namespace: {{ include "import-products.fullname" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-{{ include "import-products.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: db-{{ include "import-products.fullname" . }}
+    spec:
+      containers:
+      - name: db-import-products
+        image: postgres:10
+        env:
+          - name: POSTGRES_USER
+            value: root
+          - name: POSTGRES_PASSWORD
+            value: secret
+          - name: POSTGRES_DB
+            value: db-{{ include "import-products.fullname" . }}
+          - name: TZ
+            value: "America/Sao_Paulo"
+        ports:
+          - containerPort: 5432
+        volumeMounts:
+          - name: db-data
+            mountPath: /var/lib/postgresql/data
+          - name: db-scripts
+            mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: db-data
+          emptyDir: {}
+        - name: db-scripts
+          configMap:
+            name: product-schema-config  # Reference the ConfigMap
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-schema-config
+  namespace: {{ include "import-products.fullname" . }}
+data:
+  schema.sql: |
+    START TRANSACTION;
+
+    CREATE SCHEMA IF NOT EXISTS product;
+
+    CREATE TABLE product.product
+    (
+      id BigSerial NOT NULL,
+      name Text NOT NULL,
+      cost_price Decimal(12,2) NOT NULL,
+      sale_price Decimal(12,2) NOT NULL,
+      quantity Integer NOT NULL,
+      created_at Timestamp NOT NULL
+    )
+    WITH (autovacuum_enabled=true);
+
+    ALTER TABLE product.product ADD CONSTRAINT pk_product PRIMARY KEY (id);
+
+    COMMIT;
+

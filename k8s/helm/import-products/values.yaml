@@ -1,0 +1,40 @@
+replicaCount: 2
+
+appPort: 5000
+
+image:
+  registry: ghcr.io/vitor-csilva/importacao-produtos-web
+  tag: latest
+
+resources:
+  cpu: "1"
+  memory: "1Gi"
+
+environmentVariables: []
+  # - name: FLASK_ENV
+  #   value: development
+  # - name: FLASK_ENV
+  #   value: development
+
+environmentVariablesFrom:
+  - secretRef:
+      name: mongodb-credentials
+
+livenessProbe: {}
+  # httpGet:
+  #   path: /health
+  #   port: 5000
+readinessProbe: {}
+  # httpGet:
+  #   path: /health
+  #   port: 5000
+
+ingress:
+  enabled: false
+
+mongodb:
+  database: ZGItaW1wb3J0LXByb2R1Y3Rz
+  host: ZGItaW1wb3J0LXByb2R1Y3Rz
+  username: cm9vdA==
+  password: c2VjcmV0
+  
