@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ include "import-products.fullname" . }}-cron
-  namespace: {{ include "import-products.fullname" . }}
+  #namespace: {{ include "import-products.fullname" . }}
 spec:
   schedule: "*/5 * * * *"  # Executar a cada 5 minutos, ajuste conforme necessário
   successfulJobsHistoryLimit: 3
@@ -20,10 +20,10 @@ spec:
               - /bin/sh
               - -c
               - |
-                PODS=$(kubectl get pods -l app=import-products -o jsonpath='{.items[*].metadata.name}' -n import-products)
+                PODS=$(kubectl get pods -l app={{ include "import-products.fullname" . }} -o jsonpath='{.items[*].metadata.name}' -n {{ include "import-products.fullname" . }})
                 for POD in $PODS; do
                   echo "Running cron.py in $POD"
-                  kubectl exec -n import-products $POD -- /bin/sh -c '
+                  kubectl exec -n {{ include "import-products.fullname" . }} $POD -- /bin/sh -c '
                     cd /app/backend
                     export UPLOAD_DIR=uploads
                     python3 -m src.cron
