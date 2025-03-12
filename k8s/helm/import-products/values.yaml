@@ -1,0 +1,19 @@
+replicaCount: 2
+
+frontend_port: 8080
+backend_port: 8081
+
+image:
+  registry: ghcr.io/vitor-csilva/importacao-produtos-web
+  tag: latest
+
+resources:
+  cpu: "1"
+  memory: "1Gi"
+
+mongodb:
+  database: ZGItaW1wb3J0LXByb2R1Y3Rz
+  host: ZGItaW1wb3J0LXByb2R1Y3Rz
+  username: cm9vdA==
+  password: c2VjcmV0
+  

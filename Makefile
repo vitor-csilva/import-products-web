@@ -19,3 +19,6 @@ compose:
 # @cd backend; ./cron.sh; cd ..
 	@docker compose build
 	@docker compose up
+
+helm:
+	@helm install import-products ./k8s/helm/import-products -f ./k8s/helm/import-products/values.yaml -n import-products --create-namespace

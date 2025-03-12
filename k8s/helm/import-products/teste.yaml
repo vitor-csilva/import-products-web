@@ -1,0 +1,325 @@
+---
+# Source: import-products/templates/rbac-import-products.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cronjob-sa
+  #namespace: import-products
+---
+# Source: import-products/templates/secret-app-import-products.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: credentials
+  #namespace: import-products
+type: Opaque
+data:
+  DATABASE_HOST: ZGItaW1wb3J0LXByb2R1Y3Rz
+  DATABASE_USER: cm9vdA==
+  DATABASE_PASS: c2VjcmV0
+  DATABASE_DBNAME: ZGItaW1wb3J0LXByb2R1Y3Rz
+---
+# Source: import-products/templates/deployment-db-import-products.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-schema-config
+  #namespace: import-products
+data:
+  schema.sql: |
+    START TRANSACTION;
+
+    CREATE SCHEMA IF NOT EXISTS product;
+
+    CREATE TABLE product.product
+    (
+      id BigSerial NOT NULL,
+      name Text NOT NULL,
+      cost_price Decimal(12,2) NOT NULL,
+      sale_price Decimal(12,2) NOT NULL,
+      quantity Integer NOT NULL,
+      created_at Timestamp NOT NULL
+    )
+    WITH (autovacuum_enabled=true);
+
+    ALTER TABLE product.product ADD CONSTRAINT pk_product PRIMARY KEY (id);
+
+    COMMIT;
+---
+# Source: import-products/templates/rbac-import-products.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: exec-role
+  namespace: import-products
+rules:
+- apiGroups: [""]
+  resources: ["pods", "pods/exec"]
+  verbs: ["get", "list", "create", "exec"]
+---
+# Source: import-products/templates/rbac-import-products.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: exec-rolebinding
+  namespace: import-products
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: exec-role
+subjects:
+- kind: ServiceAccount
+  name: cronjob-sa
+  namespace: import-products
+---
+# Source: import-products/templates/service-db-import-products.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: db-import-products
+  name: db-import-products
+  #namespace: import-products
+spec:
+  selector:
+    app: db-import-products
+  ports:
+    - name: db-port
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+  clusterIP: None  # Headless service for stable DNS
+  # type: ClusterIP
+---
+# Source: import-products/templates/service-import-products.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: import-products
+    helm.sh/chart: import-products-0.1.0
+    app.kubernetes.io/name: import-products
+    app.kubernetes.io/instance: import-products
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  name: import-products
+  #namespace: import-products
+spec:
+  ports:
+  - name: backend-port
+    port: 81
+    protocol: TCP
+    targetPort: 8081  # Backend application (FastAPI)
+  - name: frontend-port
+    port: 80
+    protocol: TCP
+    targetPort: 8080  # Frontend application
+  selector:
+    app: import-products
+  type: ClusterIP
+---
+# Source: import-products/templates/deployment-app-import-products.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    helm.sh/chart: import-products-0.1.0
+    app.kubernetes.io/name: import-products
+    app.kubernetes.io/instance: import-products
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  name: import-products
+  #namespace: import-products ##temp, because later I will implementing ArgoCD
+  annotations:
+    keel.sh/policy: force
+    keel.sh/trigger: poll
+    keel.sh/match-tag: "true"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: import-products
+  template:
+    metadata:
+      labels:
+        app: import-products
+    spec:
+      containers:
+      - image: ghcr.io/vitor-csilva/importacao-produtos-web:latest
+        name: import-products
+        resources:
+          requests:
+            cpu: "500m"  #Recursos de CPU
+            memory: "512Mi"  #Recursos de memória
+          limits:
+            cpu: 1  #Recursos de CPU
+            memory: 1Gi 
+        env:
+          - name: DATABASE_HOST
+            valueFrom:
+              secretKeyRef:
+                name: credentials
+                key: DATABASE_HOST
+          - name: DATABASE_USER
+            valueFrom:
+              secretKeyRef:
+                name: credentials
+                key: DATABASE_USER
+          - name: DATABASE_PASS
+            valueFrom:
+              secretKeyRef:
+                name: credentials
+                key: DATABASE_PASS
+          - name: DATABASE_DBNAME
+            valueFrom:
+              secretKeyRef:
+                name: credentials
+                key: DATABASE_DBNAME
+          - name: UPLOAD_DIR
+            value: /app/backend/uploads
+          - name: VUE_APP_API_URL
+            value: "http://import-products.demo.com/api/"
+        readinessProbe:
+          httpGet:
+            path: /api
+            port: 8081
+        # ports:
+        #   - containerPort: 8080
+        #   - containerPort: 8081
+---
+# Source: import-products/templates/hpa.yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-import-products
+  #namespace: import-products
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: import-products
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+---
+# Source: import-products/templates/deployment-db-import-products.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: db-import-products
+  name: db-import-products
+  #namespace: import-products
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-import-products
+  template:
+    metadata:
+      labels:
+        app: db-import-products
+    spec:
+      containers:
+      - name: db-import-products
+        image: postgres:10
+        env:
+          - name: POSTGRES_USER
+            value: root
+          - name: POSTGRES_PASSWORD
+            value: secret
+          - name: POSTGRES_DB
+            value: db-import-products
+          - name: TZ
+            value: "America/Sao_Paulo"
+        ports:
+          - containerPort: 5432
+        volumeMounts:
+          - name: db-data
+            mountPath: /var/lib/postgresql/data
+          - name: db-scripts
+            mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: db-data
+          emptyDir: {}
+        - name: db-scripts
+          configMap:
+            name: product-schema-config  # Reference the ConfigMap
+---
+# Source: import-products/templates/cronjob-import-products.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: import-products-cron
+  #namespace: import-products
+spec:
+  schedule: "*/5 * * * *"  # Executar a cada 5 minutos, ajuste conforme necessário
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  suspend: true
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: cronjob-sa
+          containers:
+          - name: kubectl-exec
+            image: bitnami/kubectl:latest  # Use uma imagem com kubectl instalado
+            command:
+              - /bin/sh
+              - -c
+              - |
+                PODS=$(kubectl get pods -l app=import-products -o jsonpath='{.items[*].metadata.name}' -n import-products)
+                for POD in $PODS; do
+                  echo "Running cron.py in $POD"
+                  kubectl exec -n import-products $POD -- /bin/sh -c '
+                    cd /app/backend
+                    export UPLOAD_DIR=uploads
+                    python3 -m src.cron
+                    if [ "$?" = "0" ]; then
+                      echo "Path $UPLOAD_DIR is cleaned !!"
+                    fi
+                  '
+                done
+          restartPolicy: Never
+      backoffLimit: 3
+---
+# Source: import-products/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: import-products-ingress
+  #namespace: import-products
+  annotations:
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: import-products.demo.com
+    http:
+      paths:
+      # Frontend - No rewrite
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: import-products
+            port:
+              number: 80
+
+      # Backend API - Rewrite applied in config snippet
+      - path: /api(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: import-products
+            port:
+              number: 81
