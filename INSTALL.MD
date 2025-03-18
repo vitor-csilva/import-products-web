@@ -1,64 +1,64 @@
+# Installations
 
-# Instalações
+Follow the steps below to install the necessary tools.
 
-Siga as etapas abaixo para instalar as ferramentas necessárias.
-
-As instalações são baseadas no Sistema Operacional Linux.
+The installations are based on the Linux Operating System.
 
 ## NPM
 
-Para instalar o frontend do projeto, você precisará do NPM para instalar as dependências do Javascript.
+To install the project frontend, you will need NPM to install JavaScript dependencies.
 
-Instruções para instalação: <https://docs.npmjs.com/downloading-and-installing-node-js-and-npm>
+Installation instructions: <https://docs.npmjs.com/downloading-and-installing-node-js-and-npm>
 
 ## Python
 
-Para instalar o backend do projeto, você precisará ter o Python instalado. A versão precisará ser superior a 3.x.
+To install the project backend, you need to have Python installed. The required version must be 3.x or higher.
 
-Instruções para a instalação: <https://python.org.br/instalacao-linux>
+Installation instructions: <https://python.org.br/instalacao-linux>
 
 ### Virtual Env
 
-Para criação de um novo virtual env, digite o comando: `python3 -m venv nome_virtual_env`.
+To create a new virtual environment, run the command: `python3 -m venv virtual_env_name`.
 
-Mais instruções do virtual env necessário estarão no arquivo START.MD, na seção Backend.
+More instructions about the required virtual environment can be found in the START.MD file, under the Backend section.
 
-Link da documentação do venv: <https://docs.python.org/3/library/venv.html>
+Virtual environment documentation: <https://docs.python.org/3/library/venv.html>
 
 ## Docker
 
-Para poder trabalhar com containers você precisará instalar o Docker.
+To work with containers, you need to install Docker.
 
-Instruções para a instalação: <https://docs.docker.com/engine/install>
+Installation instructions: <https://docs.docker.com/engine/install>
 
 ### Docker Hub
 
-Para poder enviar a imagem para o Docker Hub (registro de containers público), você precisará criar uma conta no Docker Hub.
+To push images to Docker Hub (a public container registry), you need to create an account on Docker Hub.
 
 Link: <https://hub.docker.com>
 
-Após criar a conta, você poderá executar o comando: `docker login` e informar o usuário e senha criados na plataforma para autenticar e poder fazer o push das imagens.
+After creating an account, you can run the command: `docker login` and enter the username and password created on the platform to authenticate and push images.
 
 ## Docker Compose
 
-Para poder trabalhar com a orquestração dos containers no ambiente de desenvolvimento, você precisará instalar o Docker Compose.
+To orchestrate containers in the development environment, you need to install Docker Compose.
 
-Instruções para a instalação: <https://docs.docker.com/compose/install>
+Installation instructions: <https://docs.docker.com/compose/install>
 
 ## Kubernetes
 
-Para poder trabalhar com o Kubernetes, uma forma simples de fazê-lo é utilizando a ferramenta Kind.
+To work with Kubernetes, a simple way to do so is by using the Kind tool.
 
-Instruções para a instalação: <https://kind.sigs.k8s.io/docs/user/quick-start/#installation>
+Installation instructions: <https://kind.sigs.k8s.io/docs/user/quick-start/#installation>
 
-### Criando um novo cluster
+### Creating a new cluster
 
-Para criar um cluster Kubernetes: `kind create cluster --name k8s-prova`
+To create a Kubernetes cluster: `kind create cluster --name k8s-import-products`
 
 ### Kubectl
 
-Para ter acessso aos comandos que manipulam objetos do Kubernetes, instale o Kubectl.
+To access commands that manipulate Kubernetes objects, install Kubectl.
 
-Instruções para a instalação: <https://kubernetes.io/docs/tasks/tools/install-kubectl-linux>
+Installation instructions: <https://kubernetes.io/docs/tasks/tools/install-kubectl-linux>
 
-Exemplo de comando: `kubectl get nodes`
+Example command: `kubectl get nodes`
+
