@@ -30,6 +30,8 @@ spec:
             cpu: {{ .Values.resources.cpu | default "1" }}  #Recursos de CPU
             memory: {{ .Values.resources.memory | default "1Gi" }} 
         env:
+          - name: VUE_APP_VERSION_IMPORT_PRODUCTS
+            value: 2.0.0
           - name: DATABASE_HOST
             valueFrom:
               secretKeyRef:

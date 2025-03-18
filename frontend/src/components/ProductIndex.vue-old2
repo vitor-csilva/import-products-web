@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+
     <div class="row">
       <div class="card">
         <div class="card-header">
@@ -57,11 +58,6 @@
       </div>
     </div>
 
-    <!-- Footer with version -->
-    <footer class="text-center mt-4">
-      <p>Versão: {{ version }}</p>
-    </footer>
-
   </div>
 </template>
 
@@ -70,6 +66,7 @@
 const axios = require('axios').default;
 const moment = require('moment');
 const API_URL = process.env.VUE_APP_API_URL || "http://localhost:8081/api/";
+
 
 export default {
   name: 'ProductIndex',
@@ -82,7 +79,6 @@ export default {
       products: [],
       error_message: null,
       success_message: null,
-      version: process.env.VUE_APP_VERSION_IMPORT_PRODUCTS
     }
   },
   mounted() {
@@ -134,10 +130,6 @@ export default {
 }
 </script>
 
+
 <style scoped>
-footer {
-  padding: 10px;
-  font-size: 14px;
-  color: #666;
-}
 </style>

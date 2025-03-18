@@ -24,6 +24,7 @@ services:
       - DATABASE_DBNAME=db-import-products
       - UPLOAD_DIR=/app/backend/uploads
       - VUE_APP_API_URL=http://localhost:8081/api/
+      - VUE_APP_VERSION_IMPORT_PRODUCTS=2.0.0
     ports:
       - 8080:8080
       - 8081:8081
