@@ -22,3 +22,6 @@ compose:
 
 helm:
 	@helm install import-products ./k8s/helm/import-products -f ./k8s/helm/import-products/values.yaml -n import-products --create-namespace
+
+helm-upgrade:
+	@helm upgrade import-products ./k8s/helm/import-products -f ./k8s/helm/import-products/values.yaml -n import-products
