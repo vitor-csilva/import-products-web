@@ -75,6 +75,7 @@ jobs:
 
       - name: Package Helm Chart
         run: |
+          ls -lha
           mkdir -p ${{ env.CHARTS_DIR }}
           helm package k8s/helm/import-products -d ${{ env.CHARTS_DIR }}
 
