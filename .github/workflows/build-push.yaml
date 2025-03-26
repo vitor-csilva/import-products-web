@@ -1,5 +1,5 @@
 # This is a basic workflow to help you get started with Actions
-name: Build and Push Project Import Products
+name: Build and Push Docker Image & Update Helm Chart import-products
 
 on:
   push:
@@ -12,13 +12,15 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  CHARTS_DIR: k8s/helm/import-products/charts
+  REPO_URL: https://raw.githubusercontent.com/vitor-csilva/importacao-produtos-web/develop/k8s/helm/import-products/charts
 
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -48,7 +50,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -56,3 +58,34 @@ jobs:
           #platforms: linux/amd64, linux/arm64
           push: true
           tags: ${{ env.REGISTRY }}/${{ github.repository }}:latest
+  
+  package-and-push-helm:
+    runs-on: ubuntu-latest
+    needs: build-and-push-image
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.3.0
+        # with:
+        #   version: v3.14.0
+        id: install
+
+      - name: Package Helm Chart
+        run: |
+          mkdir -p ${{ env.CHARTS_DIR }}
+          helm package k8s/helm/import-products -d ${{ env.CHARTS_DIR }}
+
+      - name: Update Helm Index
+        run: |
+          helm repo index ${{ env.CHARTS_DIR }} --url ${{ env.REPO_URL }}
+
+      - name: Commit and Push Helm Chart
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions@github.com"
+          git add ${{ env.CHARTS_DIR }}
+          git commit -m "Update Helm chart package and index.yaml" || echo "No changes to commit"
+          git push origin ${{ github.ref_name }} || echo "No changes to push"
