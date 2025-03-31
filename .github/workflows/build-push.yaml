@@ -12,7 +12,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  CHARTS_DIR: ./k8s/helm/import-products/charts
+  CHARTS_DIR: ./k8s/helm/import-products
   REPO_URL: https://raw.githubusercontent.com/vitor-csilva/importacao-produtos-web/develop/k8s/helm/import-products/charts
 
 jobs:
