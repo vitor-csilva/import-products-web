@@ -12,7 +12,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  CHARTS_DIR: k8s/helm/import-products/charts
+  CHARTS_DIR: ./k8s/helm/import-products/charts
   REPO_URL: https://raw.githubusercontent.com/vitor-csilva/importacao-produtos-web/develop/k8s/helm/import-products/charts
 
 jobs:
@@ -75,7 +75,7 @@ jobs:
 
       - name: Package Helm Chart
         run: |
-          ls ./k8s/helm/import-products -lha
+          ls ${{ env.CHARTS_DIR }} -lha
           mkdir -p ${{ env.CHARTS_DIR }}
           helm package ./k8s/helm/import-products -d ${{ env.CHARTS_DIR }}
 
