@@ -3,12 +3,12 @@ entries:
   import-products:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-04-01T23:29:51.048630527Z"
+    created: "2025-04-01T23:33:26.399939798Z"
     description: A Helm chart for install import-products in the cluster Kubernetes
-    digest: b82966df82704f8a2de6a2cefaa6d728f97c42942c9a6003a9234235fd293daf
+    digest: ab66050ca3dd0cd19c154db418333516417fe25bb26056f09f0a441421c732a6
     name: import-products
     type: application
     urls:
     - https://raw.githubusercontent.com/vitor-csilva/importacao-produtos-web/develop/k8s/helm/import-products/charts/import-products-1.0.0.tgz
     version: 1.0.0
-generated: "2025-04-01T23:29:51.047902232Z"
+generated: "2025-04-01T23:33:26.398814812Z"
