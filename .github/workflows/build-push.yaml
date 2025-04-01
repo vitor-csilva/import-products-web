@@ -15,7 +15,6 @@ env:
   CHARTS_DIR: ./k8s/helm/import-products/charts
   HELM_DIR: ./k8s/helm/import-products
   REPO_URL: https://raw.githubusercontent.com/vitor-csilva/importacao-produtos-web/develop/k8s/helm/import-products/charts
-  GH_PAT_TEMP: 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
 
 jobs:
   build-and-push-image:
@@ -89,7 +88,7 @@ jobs:
       
       - name: Debug GH_PAT
         env:
-          GH_TOKEN: ${{ env.GH_PAT_TEMP }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [[ -z "${GH_TOKEN}" ]]; then
             echo "GH_PAT is not set!"
@@ -100,7 +99,7 @@ jobs:
 
       - name: Commit and Push Helm Chart
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use GITHUB_TOKEN instead
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions@github.com"
