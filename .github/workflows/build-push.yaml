@@ -87,7 +87,7 @@ jobs:
       
       - name: Debug GH_PAT
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ vars.GH_PAT }}
         run: |
           if [[ -z "${GH_TOKEN}" ]]; then
             echo "GH_PAT is not set!"
