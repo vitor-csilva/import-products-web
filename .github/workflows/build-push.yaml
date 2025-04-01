@@ -19,6 +19,7 @@ env:
 
 jobs:
   build-and-push-image:
+    if: ${{ false }}
     runs-on: ubuntu-latest
 
     permissions:
@@ -88,8 +89,7 @@ jobs:
       
       - name: Debug GH_PAT
         env:
-          GH_TOKEN: ${{ ENV.GH_PAT_TEMP }}
-          # GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ env.GH_PAT_TEMP }}
         run: |
           if [[ -z "${GH_TOKEN}" ]]; then
             echo "GH_PAT is not set!"
