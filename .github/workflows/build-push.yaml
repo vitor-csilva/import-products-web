@@ -93,7 +93,7 @@ jobs:
             echo "GH_PAT is not set!"
             exit 1
           else
-            echo "GH_PAT is set successfully!"
+            echo "${GH_TOKEN} is set successfully!"
           fi
 
       - name: Commit and Push Helm Chart
