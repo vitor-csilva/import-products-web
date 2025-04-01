@@ -1,3 +1,5 @@
+version_app: 4.0.0
+
 replicaCount: 2
 
 frontend_port: 8080
