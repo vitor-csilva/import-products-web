@@ -12,9 +12,9 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  CHARTS_DIR: ./k8s/helm/import-products/charts
+  CHARTS_DIR: ./k8s/helm/import-products/helm-repo
   HELM_DIR: ./k8s/helm/import-products
-  REPO_URL: https://raw.githubusercontent.com/vitor-csilva/importacao-produtos-web/develop/k8s/helm/import-products/charts
+  REPO_URL: https://raw.githubusercontent.com/vitor-csilva/importacao-produtos-web/develop/k8s/helm/import-products/helm-repo
 
 jobs:
   build-and-push-image:
@@ -79,7 +79,6 @@ jobs:
         run: |
           ls ${{ env.HELM_DIR }} -lha
           mkdir -p ${{ env.CHARTS_DIR }}
-          rm -f ${{ env.CHARTS_DIR }}/index.yaml
           helm package ${{ env.HELM_DIR }} -d ${{ env.CHARTS_DIR }}
 
       - name: Update Helm Index

@@ -1,4 +1,4 @@
-version_app: 4.0.0
+#version_app: 3.0.0
 
 replicaCount: 2
 
