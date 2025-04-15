@@ -31,7 +31,7 @@ spec:
             memory: {{ .Values.resources.memory | default "1Gi" }} 
         env:
           - name: VUE_APP_VERSION_IMPORT_PRODUCTS
-            value: 2.0.0
+            value: {{ .Chart.Version}}
           - name: DATABASE_HOST
             valueFrom:
               secretKeyRef:
