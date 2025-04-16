@@ -28,4 +28,4 @@ helm-upgrade:
 
 helm-package:
 	@helm package k8s/helm/import-products -d k8s/helm/import-products/charts
-	@helm repo index k8s/helm/import-products/charts --url https://raw.githubusercontent.com/vitor-csilva/importacao-produtos-web/develop/k8s/helm/import-products/charts
+	@helm repo index k8s/helm/import-products/charts --url https://raw.githubusercontent.com/vitor-csilva/importacao-produtos-web/helm-repo/k8s/helm/import-products/charts
