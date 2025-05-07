@@ -2,7 +2,7 @@
 FROM alpine/helm:3.17.2
 
 # Utilizar os args dentro de algum pipeline futuramente. 
-ARG TAG=2.0.0
+# ARG TAG=2.0.0
 ARG REPOSITORY_NAME=helm-import-products
 
 ENV REPO_URL=registry-1.docker.io

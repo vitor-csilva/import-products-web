@@ -73,32 +73,36 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Helm
-        uses: azure/setup-helm@v4.3.0
-        # with:
-        #   version: v3.14.0
-        id: install
-
-      - name: Helm Login
-        env:
-          REPO_URL: registry-1.docker.io
-          REPO_USERNAME: vitorcostasilva
-          REPO_PASSWORD: ${{ env.REPO_PASSWORD }}
+      - name: Generate helm package dockerfile
         run: |
-          echo ${{ secrets.REPO_PASSWORD }} | helm registry login ${{ env.HELM_REGISTRY }}  -u ${{ env.HELM_REPO }} --password-stdin
+          docker build --build-arg ARG TAG=${{ env.VERSION }} -t ${{ env.HELM_REGISTRY }}/${{ env.HELM_REPO }}:${{ env.VERSION }} -f ${{ env.HELM_DIR }}/Dockerfile .
 
-      - name: Helm dependency update
-        run: |
-          helm dependency update ${{ env.HELM_DIR }}
+      # - name: Set up Helm
+      #   uses: azure/setup-helm@v4.3.0
+      #   # with:
+      #   #   version: v3.14.0
+      #   id: install
 
-      - name: Helm Package
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cd ${{ env.HELM_DIR }}
-          sed -i "s/0.1.0/${{ env.VERSION }}/g" Chart.yaml
-          sed -i "s/name: import-products/name: ${{ env.HELM_REPO_NAME }}/" Chart.yaml
-          helm package . --destination generated/
-          ls generated/${{ env.HELM_REPO_NAME }}-*.tgz | xargs -i helm push {} oci://${{ env.HELM_REGISTRY }}/${{ env.HELM_REPO }}
+      # - name: Helm Login
+      #   env:
+      #     REPO_URL: registry-1.docker.io
+      #     REPO_USERNAME: vitorcostasilva
+      #     REPO_PASSWORD: ${{ env.REPO_PASSWORD }}
+      #   run: |
+      #     echo ${{ secrets.REPO_PASSWORD }} | helm registry login ${{ env.HELM_REGISTRY }}  -u ${{ env.HELM_REPO }} --password-stdin
+
+      # - name: Helm dependency update
+      #   run: |
+      #     helm dependency update ${{ env.HELM_DIR }}
+
+      # - name: Helm Package
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     cd ${{ env.HELM_DIR }}
+      #     sed -i "s/0.1.0/${{ env.VERSION }}/g" Chart.yaml
+      #     sed -i "s/name: import-products/name: ${{ env.HELM_REPO_NAME }}/" Chart.yaml
+      #     helm package . --destination generated/
+      #     ls generated/${{ env.HELM_REPO_NAME }}-*.tgz | xargs -i helm push {} oci://${{ env.HELM_REGISTRY }}/${{ env.HELM_REPO }}
         
         
