@@ -14,7 +14,7 @@ env:
   REGISTRY: ghcr.io
   HELM_REGISTRY: registry-1.docker.io
   HELM_REPO: vitorcostasilva
-  HELM_REPO_NAME: import-products
+  HELM_REPO_NAME: helm-import-products
   IMAGE_NAME: ${{ github.repository }}
   CHARTS_DIR: ./k8s/helm/import-products/helm-repo
   HELM_DIR: ./k8s/helm/import-products
@@ -68,36 +68,37 @@ jobs:
   package-and-push-helm:
     runs-on: ubuntu-latest
     needs: build-and-push-image
-  
-    permissions:
-      contents: read
-      packages: write
-  
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-  
+
+      # - name: Generate helm package dockerfile
+      #   run: |
+      #     docker build --build-arg TAG=${{ env.VERSION }} --build-arg REPO_PASSWORD=${{ env.REPO_PASSWORD }} -t ${{ env.HELM_REPO }}/${{ env.HELM_REPO_NAME }}:${{ env.VERSION }} -f ${{ env.HELM_DIR }}/Dockerfile .
+
       - name: Set up Helm
         uses: azure/setup-helm@v4.3.0
+        # with:
+        #   version: v3.14.0
         id: install
-  
-      - name: Helm Login to GHCR
+
+      - name: Helm Login
         run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
-  
-      - name: Update Helm dependencies
-        run: |
-          cd ${{ env.HELM_DIR }}
-          helm dependency update
-  
-      - name: Package Helm Chart
+          echo ${{ env.REPO_PASSWORD }} | helm registry login ${{ env.HELM_REGISTRY }} -u ${{ env.HELM_REPO }} --password-stdin
+
+      - name: Helm dependency update
         run: |
           cd ${{ env.HELM_DIR }}
-          sed -i "s/^version: .*/version: ${{ env.VERSION }}/" Chart.yaml
-          sed -i "s/^name: .*/name: ${{ env.HELM_REPO_NAME }}/" Chart.yaml
+          helm dependency update 
+
+      - name: Helm Package
+        run: |
+          pwd
+          cd ${{ env.HELM_DIR }}
+          sed -i "s/0.1.0/${{ env.VERSION }}/g" Chart.yaml
+          sed -i "s/name: import-products/name: ${{ env.HELM_REPO_NAME }}/" Chart.yaml
+          cat Chart.yaml
           helm package . --destination generated/
           ls -lha generated/
-  
-      - name: Push Helm Chart to GHCR
-        run: |
-          helm push generated/${{ env.HELM_REPO_NAME }}-${{ env.VERSION }}.tgz oci://ghcr.io/${{ github.repository_owner }}
+          helm push generated/${{ env.HELM_REPO_NAME }}-${{ env.VERSION }}.tgz oci://${{ env.HELM_REGISTRY }}/${{ env.HELM_REPO }}
