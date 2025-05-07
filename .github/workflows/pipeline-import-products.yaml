@@ -14,7 +14,7 @@ env:
   REGISTRY: ghcr.io
   HELM_REGISTRY: registry-1.docker.io
   HELM_REPO: vitorcostasilva
-  HELM_REPO_NAME: import-products
+  HELM_REPO_NAME: helm-import-products-web
   IMAGE_NAME: ${{ github.repository }}
   CHARTS_DIR: ./k8s/helm/import-products/helm-repo
   HELM_DIR: ./k8s/helm/import-products
