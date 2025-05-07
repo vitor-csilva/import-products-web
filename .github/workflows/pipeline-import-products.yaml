@@ -103,6 +103,6 @@ jobs:
           sed -i "s/0.1.0/${{ env.VERSION }}/g" Chart.yaml
           sed -i "s/name: import-products/name: ${{ env.HELM_REPO_NAME }}/" Chart.yaml
           helm package . --destination generated/
-          ls generated/${{ env.HELM_REPO_NAME }}-*.tgz | xargs -i helm push {} oci://${{ env.HELM_REGISTRY }}/${{ env.HELM_REPO }}
+          helm push generated/${{ env.HELM_REPO_NAME }}-${{ env.VERSION }}.tgz oci://${{ env.HELM_REGISTRY }}/${{ env.HELM_REPO }}
         
         
