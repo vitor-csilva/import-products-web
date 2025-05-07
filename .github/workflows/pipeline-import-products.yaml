@@ -75,7 +75,7 @@ jobs:
 
       - name: Generate helm package dockerfile
         run: |
-          docker build --build-arg TAG=${{ env.VERSION }} -t ${{ env.HELM_REPO }}/${{ env.HELM_REPO_NAME }}:${{ env.VERSION }} -f ${{ env.HELM_DIR }}/Dockerfile .
+          docker build --build-arg TAG=${{ env.VERSION }} --build-arg REPO_PASSWORD=${{ env.REPO_PASSWORD }} -t ${{ env.HELM_REPO }}/${{ env.HELM_REPO_NAME }}:${{ env.VERSION }} -f ${{ env.HELM_DIR }}/Dockerfile .
 
       # - name: Set up Helm
       #   uses: azure/setup-helm@v4.3.0

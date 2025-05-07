@@ -7,7 +7,7 @@ ARG REPOSITORY_NAME=helm-import-products
 
 ENV REPO_URL=registry-1.docker.io
 ENV REPO_USERNAME=vitorcostasilva
-ENV REPO_PASSWORD=${{ env.REPO_PASSWORD }}
+#ENV REPO_PASSWORD=${{ env.REPO_PASSWORD }}
 
 # RUN helm registry login ${REPO_URL} -u ${REPO_USERNAME} -p ${REPO_PASSWORD}
 
