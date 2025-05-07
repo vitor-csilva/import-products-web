@@ -95,8 +95,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          sed -i "s/0.1.0/${{ env.VERSION }}/g" Chart.yaml
-          sed -i "s/name: import-products/name: ${{ env.HELM_REPO_NAME }}/" Chart.yaml
+          sed -i "s/0.1.0/${{ env.VERSION }}/g" ${{ env.HELM_DIR }}/Chart.yaml
+          sed -i "s/name: import-products/name: ${{ env.HELM_REPO_NAME }}/" ${{ env.HELM_DIR }}/Chart.yaml
           helm package . --destination ${{ env.HELM_DIR }}/generated/
           ls ${{ env.HELM_DIR }}/generated/${{ env.HELM_REPO_NAME }}-*.tgz | xargs -i helm push {} oci://${{ env.HELM_REGISTRY }}/${{ env.HELM_REPO }}
         
