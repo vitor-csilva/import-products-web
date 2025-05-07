@@ -18,7 +18,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
   CHARTS_DIR: ./k8s/helm/import-products/helm-repo
   HELM_DIR: ./k8s/helm/import-products
-  REPO_URL: https://raw.githubusercontent.com/vitor-csilva/importacao-produtos-web/develop/k8s/helm/import-products/helm-repo
+  REPO_URL: https://raw.githubusercontent.com/vitor-csilva/import-products-web/develop/k8s/helm/import-products/helm-repo
 
 jobs:
   build-and-push-image:
@@ -84,10 +84,6 @@ jobs:
         id: install
 
       - name: Helm Login
-        # env:
-          # REPO_URL: registry-1.docker.io
-          # REPO_USERNAME: vitorcostasilva
-          # REPO_PASSWORD: ${{ env.REPO_PASSWORD }}
         run: |
           echo ${{ env.REPO_PASSWORD }} | helm registry login ${{ env.HELM_REGISTRY }} -u ${{ env.HELM_REPO }} --password-stdin
 
@@ -97,8 +93,6 @@ jobs:
           helm dependency update 
 
       - name: Helm Package
-        # env:
-        #   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pwd
           cd ${{ env.HELM_DIR }}
@@ -107,4 +101,5 @@ jobs:
           cat Chart.yaml
           helm package . --destination generated/
           ls -lha generated/
-          helm push generated/${{ env.HELM_REPO_NAME }}-${{ env.VERSION }}.tgz oci://${{ env.HELM_REGISTRY }}/${{ env.HELM_REPO }}/${{ env.HELM_REPO_NAME }}
+          echo ${{ env.REPO_PASSWORD }} | helm registry login ${{ env.HELM_REGISTRY }} -u ${{ env.HELM_REPO }} --password-stdin
+          helm push generated/${{ env.HELM_REPO_NAME }}-${{ env.VERSION }}.tgz oci://${{ env.HELM_REGISTRY }}/${{ env.HELM_REPO }}
