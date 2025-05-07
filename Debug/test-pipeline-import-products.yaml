@@ -1,5 +1,5 @@
 # This is a basic workflow to help you get started with Actions
-name: Build and Push Docker Image and Update/Deploy Helm Chart import-products
+name: Build and Push Docker Image & Update Helm Chart import-products
 
 on:
   push:
@@ -10,11 +10,7 @@ on:
     #   - 'frontend/**'
 
 env:
-  VERSION: 5.0.0
   REGISTRY: ghcr.io
-  HELM_REGISTRY: registry-1.docker.io
-  HELM_REPO: vitorcostasilva
-  HELM_REPO_NAME: helm-import-products
   IMAGE_NAME: ${{ github.repository }}
   CHARTS_DIR: ./k8s/helm/import-products/helm-repo
   HELM_DIR: ./k8s/helm/import-products
@@ -79,25 +75,36 @@ jobs:
         #   version: v3.14.0
         id: install
 
-      - name: Helm Login
-        env:
-          REPO_URL: registry-1.docker.io
-          REPO_USERNAME: vitorcostasilva
-          REPO_PASSWORD: ${{ env.REPO_PASSWORD }}
+      - name: Package Helm Chart
         run: |
-          echo ${{ secrets.REPO_PASSWORD }} | helm registry login ${{ env.HELM_REGISTRY }}  -u ${{ env.HELM_REPO }} --password-stdin
+          ls ${{ env.HELM_DIR }} -lha
+          mkdir -p ${{ env.CHARTS_DIR }}
+          helm package ${{ env.HELM_DIR }} -d ${{ env.CHARTS_DIR }}
 
-      - name: Helm dependency update
+      - name: Update Helm Index
         run: |
-          helm dependency update ${{ env.HELM_DIR }}
-
-      - name: Helm Package
+          helm repo index ${{ env.CHARTS_DIR }} --url ${{ env.REPO_URL }}
+      
+      - name: Debug GH_PAT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          sed -i "s/0.1.0/${{ env.VERSION }}/g" Chart.yaml
-          sed -i "s/name: import-products/name: ${{ env.HELM_REPO_NAME }}/" Chart.yaml
-          helm package . --destination ${{ env.HELM_DIR }}/generated/
-          ls ${{ env.HELM_DIR }}/generated/${{ env.HELM_REPO_NAME }}-*.tgz | xargs -i helm push {} oci://${{ env.HELM_REGISTRY }}/${{ env.HELM_REPO }}
+          if [[ -z "${GH_TOKEN}" ]]; then
+            echo "GH_PAT is not set!"
+            exit 1
+          else
+            echo "${GH_TOKEN} is set successfully!"
+          fi
+
+      - name: Commit and Push Helm Chart
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use GITHUB_TOKEN instead
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions@github.com"
+          git remote set-url origin https://${GH_TOKEN}@github.com/${{ github.repository }}.git
+          git add ${{ env.CHARTS_DIR }}
+          git commit -m "Update Helm chart package and index.yaml" || echo "No changes to commit"
+          git push origin ${{ github.ref_name }} || echo "No changes to push"
         
         
