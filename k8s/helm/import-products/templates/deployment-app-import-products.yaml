@@ -20,7 +20,7 @@ spec:
         app: {{ include "import-products.fullname" . }}
     spec:
       containers:
-      - image: {{ .Values.image.registry | default "ghcr.io/vitor-csilva/importacao-produtos-web" }}:{{ .Values.image.tag | default "latest" }}
+      - image: {{ .Values.image.registry | default "ghcr.io/vitor-csilva/import-products-web" }}:{{ .Values.image.tag | default "latest" }}
         name: import-products
         resources:
           requests:
