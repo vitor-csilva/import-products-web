@@ -100,4 +100,5 @@ jobs:
   
       - name: Push Helm Chart to GHCR
         run: |
+          cd ${{ env.HELM_DIR }}
           helm push generated/${{ env.HELM_REPO_NAME }}-${{ env.VERSION }}.tgz oci://ghcr.io/${{ github.repository_owner }}
