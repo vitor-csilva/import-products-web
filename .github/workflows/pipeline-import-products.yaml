@@ -93,16 +93,16 @@ jobs:
 
       - name: Helm dependency update
         run: |
-          helm dependency update ${{ env.HELM_DIR }}
+          cd ${{ env.HELM_DIR }}
+          helm dependency update 
 
       - name: Helm Package
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # env:
+        #   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd ${{ env.HELM_DIR }}
           sed -i "s/0.1.0/${{ env.VERSION }}/g" Chart.yaml
           sed -i "s/name: import-products/name: ${{ env.HELM_REPO_NAME }}/" Chart.yaml
+          cat Chart.yaml
           helm package . --destination generated/
+          ls -lha generated/
           helm push generated/${{ env.HELM_REPO_NAME }}-${{ env.VERSION }}.tgz oci://${{ env.HELM_REGISTRY }}/${{ env.HELM_REPO }}
-        
-        
