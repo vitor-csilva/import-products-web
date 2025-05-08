@@ -3,9 +3,15 @@ entries:
   import-products:
   - apiVersion: v2
     appVersion: 1.16.0
+<<<<<<< HEAD
     created: "2025-04-16T23:00:54.958124317Z"
     description: A Helm chart for install import-products in the cluster Kubernetes
     digest: 5e1f809cfc3f9a6986a177d588d44d6b36d89af866fcfde676366d15000f73ef
+=======
+    created: "2025-04-24T22:48:05.721629157Z"
+    description: A Helm chart for install import-products in the cluster Kubernetes
+    digest: 8dd73e3ed8bb3ee8447d4ca2dbf56cdbad101671bf69d5e077b84d0c4a1e7a40
+>>>>>>> develop
     name: import-products
     type: application
     urls:
@@ -13,9 +19,13 @@ entries:
     version: 3.0.0
   - apiVersion: v2
     appVersion: 1.16.0
+<<<<<<< HEAD
     created: "2025-04-16T23:00:54.956966485Z"
+=======
+    created: "2025-04-24T22:48:05.720021972Z"
+>>>>>>> develop
     description: A Helm chart for install import-products in the cluster Kubernetes
-    digest: addeb8def06ce3e88c1190129fae7448abe94de1b40c1c1a35e272f06b87bbb7
+    digest: a95d641bb0111e0cb90be6702c19823b888ee1d4786a7c7c7317b5e1f727fea9
     name: import-products
     type: application
     urls:
@@ -23,7 +33,11 @@ entries:
     version: 2.0.0
   - apiVersion: v2
     appVersion: 1.16.0
+<<<<<<< HEAD
     created: "2025-04-16T23:00:54.953601647Z"
+=======
+    created: "2025-04-24T22:48:05.718705946Z"
+>>>>>>> develop
     description: A Helm chart for install import-products in the cluster Kubernetes
     digest: 3cbb53aeb2eb063727f81886272822f21d909bfd4a635a652df02bfcdf02675b
     name: import-products
@@ -31,4 +45,8 @@ entries:
     urls:
     - https://raw.githubusercontent.com/vitor-csilva/importacao-produtos-web/develop/k8s/helm/import-products/helm-repo/import-products-1.0.0.tgz
     version: 1.0.0
+<<<<<<< HEAD
 generated: "2025-04-16T23:00:54.952198728Z"
+=======
+generated: "2025-04-24T22:48:05.717462677Z"
+>>>>>>> develop
