@@ -7,10 +7,11 @@ spec:
   parentRefs:
   - name: apps
     namespace: envoy-gateway-system
+    sectionName: https # Targets the port 443 listener
   hostnames:
   - "import-products.demo.com"
   rules:
-  # 1. Backend API Rule with Rewrite
+  # 1. API Rule with Path Rewrite
   - matches:
     - path:
         type: PathPrefix
@@ -22,14 +23,14 @@ spec:
           type: ReplacePrefixMatch
           replacePrefixMatch: / # This replaces the Nginx rewrite-target logic
     backendRefs:
-    - name: import-products
+    - name: import-products #{{ include "import-products.fullname" . }}
       port: 81
 
-  # 2. Frontend Rule
+  # 2. Frontend Rule (Root)
   - matches:
     - path:
         type: PathPrefix
         value: /
     backendRefs:
-    - name: import-products
+    - name: import-products #{{ include "import-products.fullname" . }}
       port: 80
