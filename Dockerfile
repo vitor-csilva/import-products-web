@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:stable-slim
 
 #Criando um diretório específico dentro do container para melhor organização
 WORKDIR /app
