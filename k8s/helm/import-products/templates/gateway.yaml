@@ -9,7 +9,9 @@ spec:
     namespace: envoy-gateway-system
     sectionName: https # Targets the port 443 listener
   hostnames:
-  - "import-products.demo.com"
+  {{- range .Values.gateway.hostnames }}
+  - {{ . | quote }}
+  {{- end }}
   rules:
   # 1. API Rule with Path Rewrite
   - matches:
