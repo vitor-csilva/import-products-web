@@ -24,7 +24,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 #Instalando dependências necessárias
 RUN pip install --no-cache-dir -r ./backend/requirements.txt
-RUN cd frontend && npm install && npm install dotenv
+RUN cd frontend && npm install
 
 #Expondo a porta de comunicação do container para acesso ao frontend e backend
 EXPOSE 8080 8081
