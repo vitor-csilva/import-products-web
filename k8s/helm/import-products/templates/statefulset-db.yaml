@@ -7,6 +7,8 @@ metadata:
     {{- include "import-products.labels" . | nindent 4 }}
     app.kubernetes.io/component: database
 spec:
+  # Required by StatefulSet API. If an older live object has a different
+  # serviceName, delete the StatefulSet once and re-sync (emptyDir data is ephemeral).
   serviceName: {{ include "import-products.database.fullname" . }}
   replicas: 1
   selector:
@@ -15,7 +17,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "import-products.database.selectorLabels" . | nindent 8 }}
+        {{- include "import-products.database.podLabels" . | nindent 8 }}
     spec:
       containers:
         - name: postgres

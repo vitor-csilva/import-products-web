@@ -42,13 +42,20 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
-Selector labels (app)
+Immutable matchLabels for Deployment/Service (must stay stable across upgrades)
 */}}
 {{- define "import-products.selectorLabels" -}}
+app: {{ include "import-products.fullname" . }}
+{{- end }}
+
+{{/*
+Pod template labels (can include extras; must contain selectorLabels)
+*/}}
+{{- define "import-products.podLabels" -}}
+{{ include "import-products.selectorLabels" . }}
 app.kubernetes.io/name: {{ include "import-products.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/component: app
-app: {{ include "import-products.fullname" . }}
 {{- end }}
 
 {{/*
@@ -59,13 +66,20 @@ Database fullname
 {{- end }}
 
 {{/*
-Database selector labels
+Immutable matchLabels for StatefulSet/Service DB
 */}}
 {{- define "import-products.database.selectorLabels" -}}
+app: {{ include "import-products.database.fullname" . }}
+{{- end }}
+
+{{/*
+Database pod template labels
+*/}}
+{{- define "import-products.database.podLabels" -}}
+{{ include "import-products.database.selectorLabels" . }}
 app.kubernetes.io/name: {{ include "import-products.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/component: database
-app: {{ include "import-products.database.fullname" . }}
 {{- end }}
 
 {{/*

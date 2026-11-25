@@ -20,7 +20,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "import-products.selectorLabels" . | nindent 8 }}
+        {{- include "import-products.podLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

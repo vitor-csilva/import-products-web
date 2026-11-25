@@ -10,7 +10,7 @@ on:
     #   - 'frontend/**'
 
 env:
-  VERSION: 7.0.0
+  VERSION: 7.0.1
   REGISTRY: ghcr.io
   HELM_REGISTRY: registry-1.docker.io
   HELM_REPO: vitorcostasilva
