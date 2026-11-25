@@ -86,8 +86,9 @@ database:
 ## Gateway API HTTPRoute
 gateway:
   enabled: true
+  # Must intersect with Gateway listener hostname (e.g. *.homelab.home.arpa)
   hostnames:
-    - import-products.demo.com
+    - import-products.homelab.home.arpa
   parentRefs:
     - name: apps
       namespace: envoy-gateway-system
