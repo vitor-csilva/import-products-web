@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "import-products.fullname" . }}
+  labels:
+    {{- include "import-products.labels" . | nindent 4 }}
+  {{- if .Values.keel.enabled }}
+  annotations:
+    keel.sh/policy: {{ .Values.keel.policy | quote }}
+    keel.sh/trigger: {{ .Values.keel.trigger | quote }}
+    keel.sh/match-tag: {{ .Values.keel.matchTag | quote }}
+  {{- end }}
+spec:
+  {{- if not .Values.hpa.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "import-products.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "import-products.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: import-products
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: frontend
+              containerPort: {{ .Values.service.frontend.targetPort }}
+              protocol: TCP
+            - name: backend
+              containerPort: {{ .Values.service.backend.targetPort }}
+              protocol: TCP
+          env:
+            - name: VUE_APP_VERSION_IMPORT_PRODUCTS
+              value: {{ .Chart.Version | quote }}
+            - name: DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "import-products.secretName" . }}
+                  key: DATABASE_HOST
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "import-products.secretName" . }}
+                  key: DATABASE_USER
+            - name: DATABASE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "import-products.secretName" . }}
+                  key: DATABASE_PASS
+            - name: DATABASE_DBNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "import-products.secretName" . }}
+                  key: DATABASE_DBNAME
+            - name: UPLOAD_DIR
+              value: {{ .Values.app.uploadDir | quote }}
+            - name: VUE_APP_API_URL
+              value: {{ include "import-products.apiUrl" . | quote }}
+            {{- with .Values.app.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- if .Values.probes.readiness.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.readiness.path }}
+              port: {{ include "import-products.readinessPort" . }}
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

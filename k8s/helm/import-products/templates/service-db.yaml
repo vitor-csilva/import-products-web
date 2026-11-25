@@ -1,0 +1,18 @@
+{{- if .Values.database.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "import-products.database.fullname" . }}
+  labels:
+    {{- include "import-products.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+spec:
+  clusterIP: None
+  ports:
+    - name: postgres
+      protocol: TCP
+      port: {{ .Values.database.port }}
+      targetPort: {{ .Values.database.port }}
+  selector:
+    {{- include "import-products.database.selectorLabels" . | nindent 4 }}
+{{- end }}

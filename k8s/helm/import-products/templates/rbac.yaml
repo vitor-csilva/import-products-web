@@ -1,0 +1,40 @@
+{{- if .Values.serviceAccount.create }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "import-products.serviceAccountName" . }}
+  labels:
+    {{- include "import-products.labels" . | nindent 4 }}
+  {{- with .Values.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- if .Values.rbac.create }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "import-products.fullname" . }}-exec
+  labels:
+    {{- include "import-products.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/exec"]
+    verbs: ["get", "list", "create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "import-products.fullname" . }}-exec
+  labels:
+    {{- include "import-products.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "import-products.fullname" . }}-exec
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "import-products.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}

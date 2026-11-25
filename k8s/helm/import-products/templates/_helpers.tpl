@@ -7,8 +7,6 @@ Expand the name of the chart.
 
 {{/*
 Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If release name contains chart name it will be used as a full name.
 */}}
 {{- define "import-products.fullname" -}}
 {{- if .Values.fullnameOverride }}
@@ -31,11 +29,12 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Common labels
+Common labels (no component — set per resource)
 */}}
 {{- define "import-products.labels" -}}
 helm.sh/chart: {{ include "import-products.chart" . }}
-{{ include "import-products.selectorLabels" . }}
+app.kubernetes.io/name: {{ include "import-products.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -43,20 +42,85 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
-Selector labels
+Selector labels (app)
 */}}
 {{- define "import-products.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "import-products.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/component: app
+app: {{ include "import-products.fullname" . }}
 {{- end }}
 
 {{/*
-Create the name of the service account to use
+Database fullname
+*/}}
+{{- define "import-products.database.fullname" -}}
+{{- printf "db-%s" (include "import-products.fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Database selector labels
+*/}}
+{{- define "import-products.database.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "import-products.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/component: database
+app: {{ include "import-products.database.fullname" . }}
+{{- end }}
+
+{{/*
+Database host (service DNS)
+*/}}
+{{- define "import-products.database.host" -}}
+{{- if .Values.database.host -}}
+{{- .Values.database.host -}}
+{{- else -}}
+{{- include "import-products.database.fullname" . -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Secret name for DB credentials
+*/}}
+{{- define "import-products.secretName" -}}
+{{- if .Values.database.existingSecret -}}
+{{- .Values.database.existingSecret -}}
+{{- else -}}
+{{- printf "%s-credentials" (include "import-products.fullname" .) -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+API URL used by the frontend
+*/}}
+{{- define "import-products.apiUrl" -}}
+{{- if .Values.app.apiUrl -}}
+{{- .Values.app.apiUrl -}}
+{{- else if and .Values.gateway.enabled .Values.gateway.hostnames -}}
+{{- printf "https://%s/api/" (index .Values.gateway.hostnames 0) -}}
+{{- else -}}
+{{- printf "http://%s/api/" (include "import-products.fullname" .) -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Service account name
 */}}
 {{- define "import-products.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "import-products.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+{{- if .Values.serviceAccount.create -}}
+{{- default (printf "%s-cronjob" (include "import-products.fullname" .)) .Values.serviceAccount.name -}}
+{{- else -}}
+{{- default "default" .Values.serviceAccount.name -}}
+{{- end -}}
 {{- end }}
+
+{{/*
+Readiness probe port
+*/}}
+{{- define "import-products.readinessPort" -}}
+{{- if .Values.probes.readiness.port -}}
+{{- .Values.probes.readiness.port -}}
+{{- else -}}
+{{- .Values.service.backend.targetPort -}}
+{{- end -}}
 {{- end }}

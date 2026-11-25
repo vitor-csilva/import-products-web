@@ -1,24 +1,123 @@
-#version_app: 3.0.0
+## Global naming overrides
+# Keeps resource names as import-products even when the chart
+# is published as helm-import-products-web
+nameOverride: import-products
+fullnameOverride: ""
 
+## Application Deployment
 replicaCount: 2
 
-frontend_port: 8080
-backend_port: 8081
-
 image:
-  registry: ghcr.io/vitor-csilva/import-products-web
+  repository: ghcr.io/vitor-csilva/import-products-web
   tag: latest
+  pullPolicy: IfNotPresent
 
+imagePullSecrets: []
+
+## App runtime settings
+app:
+  uploadDir: /app/backend/uploads
+  # If empty, derived from gateway.hostnames[0] as https://<host>/api/
+  apiUrl: ""
+  extraEnv: []
+  # - name: FOO
+  #   value: bar
+
+## Service (ClusterIP ports exposed to Gateway / in-cluster)
+service:
+  type: ClusterIP
+  frontend:
+    port: 80
+    targetPort: 8080
+  backend:
+    port: 81
+    targetPort: 8081
+
+## Resources
 resources:
-  cpu: "1"
-  memory: "1Gi"
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
 
-mongodb:
-  database: ZGItaW1wb3J0LXByb2R1Y3Rz
-  host: ZGItaW1wb3J0LXByb2R1Y3Rz
-  username: cm9vdA==
-  password: c2VjcmV0
+## Probes
+probes:
+  readiness:
+    enabled: true
+    path: /api
+    # Uses backend targetPort when empty
+    port: ""
+    initialDelaySeconds: 5
+    periodSeconds: 10
 
+## Keel image update annotations
+keel:
+  enabled: true
+  policy: force
+  trigger: poll
+  matchTag: "true"
+
+## Postgres database (in-cluster)
+database:
+  enabled: true
+  image:
+    repository: postgres
+    tag: "10"
+    pullPolicy: IfNotPresent
+  auth:
+    username: root
+    password: secret
+    database: db-import-products
+  # Host used by the app. Empty => db-<fullname> service DNS
+  host: ""
+  port: 5432
+  timezone: America/Sao_Paulo
+  # Use an existing secret instead of creating one from auth.*
+  # Expected keys: DATABASE_HOST, DATABASE_USER, DATABASE_PASS, DATABASE_DBNAME
+  existingSecret: ""
+  persistence:
+    enabled: false
+    size: 5Gi
+    storageClass: ""
+  resources: {}
+
+## Gateway API HTTPRoute
 gateway:
+  enabled: true
   hostnames:
     - import-products.demo.com
+  parentRefs:
+    - name: apps
+      namespace: envoy-gateway-system
+      sectionName: https
+  api:
+    pathPrefix: /api
+    rewritePrefix: /
+
+## Horizontal Pod Autoscaler
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 50
+
+## CronJob (kubectl exec into app pods)
+cronjob:
+  enabled: true
+  suspend: true
+  schedule: "*/5 * * * *"
+  image: bitnami/kubectl:latest
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  backoffLimit: 3
+
+## ServiceAccount / RBAC for CronJob
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+rbac:
+  create: true
