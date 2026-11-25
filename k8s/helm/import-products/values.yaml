@@ -49,7 +49,7 @@ probes:
     path: /api
     # Uses backend targetPort when empty
     port: ""
-    initialDelaySeconds: 5
+    initialDelaySeconds: 20
     periodSeconds: 10
 
 ## Keel image update annotations

@@ -12,7 +12,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from pydantic import BaseModel
 
-DATABASE_URL = f"postgresql://{os.getenv('DATABASE_USER')}:{os.getenv('DATABASE_PASS')}@{os.getenv('DATABASE_HOST')}/{os.getenv('DATABASE_DBNAME')}"
+DATABASE_URL = (
+    f"postgresql+psycopg2://{os.getenv('DATABASE_USER')}:{os.getenv('DATABASE_PASS')}"
+    f"@{os.getenv('DATABASE_HOST')}/{os.getenv('DATABASE_DBNAME')}"
+)
 engine = sqlalchemy.create_engine(DATABASE_URL, echo=True)
 
 api = FastAPI()
