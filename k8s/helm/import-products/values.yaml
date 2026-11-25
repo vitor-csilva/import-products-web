@@ -10,7 +10,8 @@ replicaCount: 2
 image:
   repository: ghcr.io/vitor-csilva/import-products-web
   tag: latest
-  pullPolicy: IfNotPresent
+  # Prefer Always when using the mutable "latest" tag
+  pullPolicy: Always
 
 imagePullSecrets: []
 
@@ -52,12 +53,12 @@ probes:
     initialDelaySeconds: 20
     periodSeconds: 10
 
-## Keel image update annotations
-keel:
-  enabled: true
-  policy: force
-  trigger: poll
-  matchTag: "true"
+## Deployment annotations (e.g. Keel). Set per environment in cluster values.
+deploymentAnnotations: {}
+  # keel.sh/policy: force
+  # keel.sh/trigger: poll
+  # keel.sh/match-tag: "true"
+  # keel.sh/pollSchedule: "@every 1m"
 
 ## Postgres database (in-cluster)
 database:

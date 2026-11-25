@@ -4,11 +4,9 @@ metadata:
   name: {{ include "import-products.fullname" . }}
   labels:
     {{- include "import-products.labels" . | nindent 4 }}
-  {{- if .Values.keel.enabled }}
+  {{- with .Values.deploymentAnnotations }}
   annotations:
-    keel.sh/policy: {{ .Values.keel.policy | quote }}
-    keel.sh/trigger: {{ .Values.keel.trigger | quote }}
-    keel.sh/match-tag: {{ .Values.keel.matchTag | quote }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   {{- if not .Values.hpa.enabled }}
